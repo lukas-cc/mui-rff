@@ -6,6 +6,7 @@ import {
 } from '@mui/material/Autocomplete';
 import { AutocompleteValue, UseAutocompleteProps as MuiUseAutocompleteProps } from '@mui/material/useAutocomplete';
 import { Field, FieldProps, FieldRenderProps } from 'react-final-form';
+import { InputBaseProps } from '@mui/material/InputBase/InputBase';
 import { ShowErrorFunc, showErrorOnChange } from './Util';
 import React from 'react';
 import TextField, { TextFieldProps as MuiTextFieldProps } from '@mui/material/TextField';
@@ -144,6 +145,11 @@ function AutocompleteWrapper<
 	const { error, submitError } = meta;
 	const isError = showError({ meta });
 
+	const restTextFieldPropsInput: Partial<InputBaseProps> | undefined =
+		typeof restTextFieldProps.slotProps?.input === 'object'
+			? (restTextFieldProps.slotProps.input as Partial<InputBaseProps>)
+			: undefined;
+
 	return (
 		<MuiAutocomplete
 			multiple={multiple}
@@ -170,25 +176,27 @@ function AutocompleteWrapper<
 					}}
 					{...params}
 					{...restTextFieldProps}
-					InputProps={{
-						...params.InputProps,
-						...restTextFieldProps.InputProps,
-						...(restTextFieldProps.InputProps?.startAdornment && {
-							startAdornment: (
-								<>
-									{restTextFieldProps.InputProps.startAdornment}
-									{params.InputProps?.startAdornment}
-								</>
-							),
-						}),
-						...(restTextFieldProps.InputProps?.endAdornment && {
-							endAdornment: (
-								<>
-									{params.InputProps?.endAdornment}
-									{restTextFieldProps.InputProps?.endAdornment}
-								</>
-							),
-						}),
+					slotProps={{
+						input: {
+							...params.InputProps,
+							...restTextFieldPropsInput,
+							...(restTextFieldPropsInput?.startAdornment && {
+								startAdornment: (
+									<>
+										{restTextFieldPropsInput.startAdornment}
+										{params.InputProps?.startAdornment}
+									</>
+								),
+							}),
+							...(restTextFieldPropsInput?.endAdornment && {
+								endAdornment: (
+									<>
+										{params.InputProps?.endAdornment}
+										{restTextFieldPropsInput.endAdornment}
+									</>
+								),
+							}),
+						},
 					}}
 					fullWidth={true}
 				/>
